@@ -1,0 +1,354 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRILL MASTERS | Created by Karan Verma</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Premium Minimalist Black & White Theme Styles */
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Monochromatic Border Accents & Custom Styling */
+        .premium-border {
+            border: 2px solid #FFFFFF;
+            box-shadow: 4px 4px 0px #FFFFFF;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-border:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px #FFFFFF;
+        }
+
+        /* Hardware accelerated smooth scroll animations */
+        .pop-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            will-change: transform, opacity;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pop-right {
+            opacity: 0;
+            transform: translateX(40px);
+            will-change: transform, opacity;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* IntersectionObserver visibility state */
+        .is-visible {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
+
+        /* Smooth custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFFFFF;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="selection:bg-white selection:text-black">
+
+    <!-- Sticky Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-90 border-b border-white border-opacity-05 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#hero" class="flex items-center space-x-3 group">
+                <!-- MINI LOGO SLOT -->
+                <div class="w-8 h-8 rounded border border-white overflow-hidden bg-neutral-900 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <img id="navLogoImg" src="https://i.ibb.co/84bMbV7S/Screenshot-20260429-174505-Gallery.jpg" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+                         alt="GM Mini Logo" 
+                         class="w-full h-full object-cover">
+                    <span class="hidden text-xs font-black tracking-tighter" style="display: none;">GM</span>
+                </div>
+                <span class="font-black tracking-widest text-lg uppercase">GRILL MASTERS</span>
+            </a>
+            <span class="text-xs uppercase tracking-widest text-neutral-400 font-bold hidden sm:inline-block">BY KARAN VERMA</span>
+        </div>
+    </header>
+
+    <!-- Section 1: Hero Entry Area & Grill Masters Logo Image Slot -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-24 relative">
+        <!-- Main Logo Image Container -->
+        <div class="mb-10 pop-left is-visible duration-1000 w-64 h-64 md:w-72 md:h-72 bg-neutral-950 rounded-xl premium-border overflow-hidden flex items-center justify-center relative group">
+            <img id="mainLogoImg" src="https://i.ibb.co/84bMbV7S/Screenshot-20260429-174505-Gallery.jpg" 
+                 onerror="this.src='https://placehold.co/600x600/000000/FFFFFF?text=GRILL+MASTERS'" 
+                 alt="Grill Masters Main Logo" 
+                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+        </div>
+
+        <div class="max-w-3xl mx-auto pop-right is-visible duration-1000 delay-200">
+            <h1 class="text-4xl md:text-7xl font-black tracking-tight mb-4 uppercase">
+                GRILL MASTERS
+            </h1>
+            <p class="text-lg md:text-xl font-light mb-12 tracking-widest text-neutral-400 uppercase">
+                Vibrant Energy &bull; Sophisticated Calm
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="#about" class="px-8 py-4 bg-white text-black font-extrabold rounded-lg hover:bg-neutral-200 transition duration-300 w-full sm:w-auto uppercase tracking-wider">
+                    Enter the Zone
+                </a>
+                <a href="#gallery" class="px-8 py-4 bg-transparent text-white font-extrabold rounded-lg border-2 border-white hover:bg-white hover:text-black transition duration-300 w-full sm:w-auto uppercase tracking-wider">
+                    View Gallery
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Alternating Pop-up Layout (Spitting Fire) -->
+    <section id="about" class="py-32 px-6 bg-neutral-950 border-t border-b border-white border-opacity-10">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            
+            <!-- Left Side Pops Up First -->
+            <div class="pop-left">
+                <h2 class="text-4xl md:text-6xl font-black mb-8 uppercase tracking-tight">
+                    SERIOUS HEAT. <br/>
+                    ZERO FILTERS.
+                </h2>
+                <div class="w-20 h-1 bg-white mb-8"></div>
+                <p class="text-lg text-neutral-400 leading-relaxed mb-6">
+                    Welcome to Grill Masters, a pure monochromatic creative landscape built on passion, energy, and craft. We design, build, and record experiences that break conventional guidelines and stand strong on independent foundations.
+                </p>
+                <p class="text-lg text-neutral-400 leading-relaxed">
+                    Conceptualized and curated from the ground up by creator Karan Verma, this digital headquarters acts as our stamp on the culture, integrating visual depth with sharp, impactful execution.
+                </p>
+            </div>
+            
+            <!-- Right Side Pops Up Second -->
+            <div class="pop-right bg-black p-8 md:p-12 rounded-xl premium-border">
+                <span class="text-xs tracking-widest text-neutral-500 uppercase block mb-4 font-bold">THE MOTTO</span>
+                <blockquote class="text-2xl md:text-3xl font-bold tracking-tight mb-8 italic">
+                    "WE DO NOT ADAPT TO THE HEAT. WE BRING THE FIRE."
+                </blockquote>
+                <p class="text-neutral-400 text-sm mb-6 uppercase tracking-wider">
+                    ESTABLISHED FOR CULTURAL MASTERY AND ARCHITECTURAL EXCELLENCE WORLDWIDE.
+                </p>
+                <a href="#contact" class="inline-block px-6 py-3 bg-white text-black font-black uppercase text-xs tracking-wider rounded-md hover:bg-neutral-200 transition">
+                    Leave a Message
+                </a>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Section 3: THE IMAGE GALLERY -->
+    <section id="gallery" class="py-32 px-6 bg-black">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 pop-left">
+                <h2 class="text-3xl md:text-5xl font-black uppercase tracking-wider">THE VISUAL ARCHIVE</h2>
+                <p class="text-neutral-400 uppercase tracking-widest text-xs mt-2">Captured Moments from the Lab</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- IMAGE SLOT 1: Pop Left -->
+                <div class="pop-left bg-neutral-950 p-4 rounded-lg border border-neutral-800 hover:border-white transition-all duration-300">
+                    <div class="overflow-hidden rounded mb-4 aspect-square bg-neutral-900 flex items-center justify-center relative group">
+                        <img id="galleryImg1" src="" 
+                             alt="Grill Masters Showcase 1" 
+                             class="w-full h-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-110 group-hover:grayscale-0">
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-tight">01. THE PREP</h3>
+                    <p class="text-neutral-400 text-xs mt-1">Mastering the temperature before the drop.</p>
+                </div>
+
+                <!-- IMAGE SLOT 2: Pop Right -->
+                <div class="pop-right bg-neutral-950 p-4 rounded-lg border border-neutral-800 hover:border-white transition-all duration-300">
+                    <div class="overflow-hidden rounded mb-4 aspect-square bg-neutral-900 flex items-center justify-center relative group">
+                        <img id="galleryImg2" src="" 
+                             alt="Grill Masters Showcase 2" 
+                             class="w-full h-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-110 group-hover:grayscale-0">
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-tight">02. THE COALS</h3>
+                    <p class="text-neutral-400 text-xs mt-1">Pure intense heat built over long hours.</p>
+                </div>
+
+                <!-- IMAGE SLOT 3: Pop Left -->
+                <div class="pop-left bg-neutral-950 p-4 rounded-lg border border-neutral-800 hover:border-white transition-all duration-300">
+                    <div class="overflow-hidden rounded mb-4 aspect-square bg-neutral-900 flex items-center justify-center relative group">
+                        <img id="galleryImg3" src="" 
+                             alt="Grill Masters Showcase 3" 
+                             class="w-full h-full object-cover grayscale contrast-125 transition-all duration-500 group-hover:scale-110 group-hover:grayscale-0">
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-tight">03. THE MASTER</h3>
+                    <p class="text-neutral-400 text-xs mt-1">Created by Karan Verma on independent roots.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Pillars / Highlights (Alternating pops) -->
+    <section class="py-32 px-6 bg-neutral-950 border-t border-white border-opacity-10">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-black mb-16 text-center uppercase tracking-wider">THE FOUNDATION</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Pillar 1: Pops Up from Left -->
+                <div class="pop-left bg-black p-8 rounded-lg border border-neutral-800 flex flex-col justify-between h-80 hover:border-white transition-all duration-300">
+                    <div>
+                        <span class="text-xs tracking-widest text-neutral-500 uppercase font-bold">01 / CONCEPT</span>
+                        <h3 class="text-2xl font-black mt-4 mb-4 uppercase">PURE BRANDING</h3>
+                        <p class="text-neutral-400 text-sm">
+                            Combining deep high-contrast aesthetics with modern, clean layouts to design identities that cannot be ignored.
+                        </p>
+                    </div>
+                    <span class="text-xs uppercase tracking-widest text-white mt-6 font-bold">DESIGN ACTIVE &rarr;</span>
+                </div>
+
+                <!-- Pillar 2: Pops Up from Right -->
+                <div class="pop-right bg-black p-8 rounded-lg border border-neutral-800 flex flex-col justify-between h-80 hover:border-white transition-all duration-300">
+                    <div>
+                        <span class="text-xs tracking-widest text-neutral-500 uppercase font-bold">02 / MISSION</span>
+                        <h3 class="text-2xl font-black mt-4 mb-4 uppercase">BE YOU</h3>
+                        <p class="text-neutral-400 text-sm">
+                            Reject corporate templates, find your authentic narrative, and build empires out of your raw truths.
+                        </p>
+                    </div>
+                    <span class="text-xs uppercase tracking-widest text-white mt-6 font-bold">STAND STRONG &rarr;</span>
+                </div>
+
+                <!-- Pillar 3: Pops Up from Left -->
+                <div class="pop-left bg-black p-8 rounded-lg border border-neutral-800 flex flex-col justify-between h-80 hover:border-white transition-all duration-300">
+                    <div>
+                        <span class="text-xs tracking-widest text-neutral-500 uppercase font-bold">03 / REALM</span>
+                        <h3 class="text-2xl font-black mt-4 mb-4 uppercase">THE EMPIRE</h3>
+                        <p class="text-neutral-400 text-sm">
+                            From the initial seed of creative ideas to massive international distributions. We oversee the entire lifecycle.
+                        </p>
+                    </div>
+                    <span class="text-xs uppercase tracking-widest text-white mt-6 font-bold">EXECUTION ONWARDS &rarr;</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Contact Advisory Grid Forms (Pops Up from Right) -->
+    <section id="contact" class="py-32 px-6 bg-black border-t border-white border-opacity-10">
+        <div class="max-w-4xl mx-auto">
+            
+            <div class="text-center mb-16 pop-left">
+                <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight mb-4">GRILL PORTAL</h2>
+                <p class="text-neutral-400 uppercase tracking-widest text-sm font-bold">DIRECT CONNECTION LINE TO THE LAB</p>
+            </div>
+
+            <!-- Form pops up from right -->
+            <div class="bg-neutral-950 p-8 md:p-12 rounded-xl premium-border pop-right">
+                <h3 class="text-2xl font-bold uppercase mb-8 text-center tracking-widest">SEND TRANSMISSION</h3>
+                
+                <form id="contactForm" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest mb-2 text-neutral-400 font-bold">CREATIVE NAME</label>
+                            <input type="text" id="name" name="name" placeholder="Name" required 
+                                   class="w-full p-4 rounded bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-white transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest mb-2 text-neutral-400 font-bold">GMAIL ACCOUNT</label>
+                            <input type="email" id="email" name="email" placeholder="karan@gmail.com" required 
+                                   class="w-full p-4 rounded bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-white transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest mb-2 text-neutral-400 font-bold">DETAILED MESSAGE</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Let's cook up something monumental together..." required 
+                                  class="w-full p-4 rounded bg-neutral-900 border border-neutral-800 text-white focus:outline-none focus:border-white transition"></textarea>
+                    </div>
+                    <button type="submit" 
+                            class="w-full py-4 bg-white text-black font-black uppercase tracking-wider rounded hover:bg-neutral-200 transition transform duration-150 active:scale-[0.98]">
+                        LAUNCH TRANSMISSION
+                    </button>
+                    <p id="formFeedback" class="text-center text-sm font-bold mt-4 hidden text-white bg-neutral-900 py-3 rounded border border-white px-4"></p>
+                </form>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer Area showing creator identity -->
+    <footer class="py-12 bg-black border-t border-neutral-900 text-center text-xs text-neutral-500 uppercase tracking-widest">
+        <div class="max-w-7xl mx-auto px-6 space-y-4">
+            <p>&copy; 2026 GRILL MASTERS. ALL RIGHTS RESERVED.</p>
+            <p class="text-white font-bold">CREATED BY KARAN VERMA</p>
+        </div>
+    </footer>
+
+    <!-- IntersectionObserver Scripts for Dynamic Pops on Scroll -->
+    <script>
+        // =======================================================
+        //              EASY IMAGE EDITING ZONE
+        // =======================================================
+        // Scroll to the very bottom to quickly paste your direct image links here!
+        // Make sure your link starts with https:// and ends with .jpg, .png, or .jpeg
+        
+        const MY_LOGO_LINK = "https://placehold.co/600x600/000000/FFFFFF?text=GRILL+MASTERS"; 
+        
+        const GALLERY_IMAGE_1 = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80";
+        const GALLERY_IMAGE_2 = "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80";
+        const GALLERY_IMAGE_3 = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80";
+
+        // =======================================================
+        //              CODE LOGIC (DO NOT CHANGE)
+        // =======================================================
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Instantly apply the custom image configurations defined above
+            document.getElementById('navLogoImg').src = MY_LOGO_LINK;
+            document.getElementById('mainLogoImg').src = MY_LOGO_LINK;
+            document.getElementById('galleryImg1').src = GALLERY_IMAGE_1;
+            document.getElementById('galleryImg2').src = GALLERY_IMAGE_2;
+            document.getElementById('galleryImg3').src = GALLERY_IMAGE_3;
+
+            const options = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -40px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, options);
+
+            const componentsToPop = document.querySelectorAll('.pop-left, .pop-right');
+            componentsToPop.forEach(element => observer.observe(element));
+
+            // Setup Custom form feedback simulator 
+            document.getElementById('contactForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const feedback = document.getElementById('formFeedback');
+                
+                feedback.textContent = 'TRANSMISSION SUCCESSFULLY FILED. KARAN VERMA\'S MANAGEMENT WILL CONTACT YOU SHORTLY.';
+                feedback.classList.remove('hidden');
+                
+                document.getElementById('contactForm').reset();
+                
+                setTimeout(() => {
+                    feedback.classList.add('hidden');
+                }, 6000);
+            });
+        });
+    </script>
+</body>
+</html>
+
+```

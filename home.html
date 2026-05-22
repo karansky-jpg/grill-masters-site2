@@ -1,0 +1,1558 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRILL MASTERS - Royal Indian Luxury Menu & Firestore Ordering</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Base Luxury Styles & Colors */
+        :root {
+            --color-ivory: #FAF6F0;
+            --color-ivory-dark: #F3ECE0;
+            --color-royal-green: #0B3C20;
+            --color-royal-blue: #0A1D37;
+            --color-gold: #D4AF37;
+            --color-fire-yellow: #FFB302;
+            --color-charcoal-wood: #202124;
+        }
+
+        body {
+            background-color: var(--color-ivory);
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--color-royal-blue);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .font-sans-alt {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* 3D Flip Book Styles */
+        .book-container {
+            perspective: 1500px;
+            position: relative;
+        }
+
+        .page-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease, z-index 0s;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .page-card.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: rotateY(0deg) scale(1);
+            z-index: 20;
+        }
+
+        /* Page Flip Animation Classes */
+        .page-card.flipped {
+            transform: rotateY(-180deg) scale(0.95);
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .page-card.incoming {
+            transform: rotateY(30deg) scale(0.95);
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar for Menu Pages */
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(11, 60, 32, 0.05);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--color-gold);
+            border-radius: 10px;
+        }
+
+        /* Glowing Effects */
+        .gold-glow {
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        .yellow-glow {
+            text-shadow: 0 0 12px rgba(255, 179, 2, 0.4);
+        }
+
+        /* Royal Corner Ornaments */
+        .ornament-corner {
+            width: 32px;
+            height: 32px;
+            border-color: var(--color-gold);
+            position: absolute;
+            pointer-events: none;
+        }
+        .ornament-tl { top: 12px; left: 12px; border-top: 2px solid; border-left: 2px solid; }
+        .ornament-tr { top: 12px; right: 12px; border-top: 2px solid; border-right: 2px solid; }
+        .ornament-bl { bottom: 12px; left: 12px; border-bottom: 2px solid; border-left: 2px solid; }
+        .ornament-br { bottom: 12px; right: 12px; border-bottom: 2px solid; border-right: 2px solid; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Luxury Header Banner -->
+    <header class="w-full text-center py-3 bg-[#0A1D37] text-[#FAF6F0] border-b border-[#D4AF37] z-50 shadow-md">
+        <p class="font-sans-alt text-xs tracking-[0.25em] uppercase font-light text-[#FAF6F0]/80">
+            Created By <span class="text-[#D4AF37] font-medium">Karan Digital Menu Agency</span>
+        </p>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-start py-6 px-4 md:px-8 max-w-6xl w-full mx-auto relative">
+        
+        <!-- Search, Filtering, and Audio Controls Panel -->
+        <div class="w-full max-w-4xl bg-gradient-to-r from-[#0A1D37] to-[#0D2444] rounded-xl p-4 mb-4 border border-[#D4AF37]/50 shadow-xl flex flex-col gap-4 z-40">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <!-- Branding Mini Title -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[#FFB302]"><i data-lucide="crown" class="w-5 h-5"></i></span>
+                    <h2 class="font-cinzel text-[#FAF6F0] text-sm tracking-widest font-bold">GRILL MASTERS EST. 2026</h2>
+                </div>
+
+                <!-- Navigation and Audio Buttons -->
+                <div class="flex items-center gap-4">
+                    <button onclick="prevPage()" class="flex items-center gap-1 font-cinzel text-xs text-[#FAF6F0] hover:text-[#FFB302] transition duration-300">
+                        <i data-lucide="chevron-left" class="w-4 h-4 text-[#D4AF37]"></i> Prev
+                    </button>
+                    
+                    <button onclick="toggleAudio()" id="sound-btn" class="flex items-center gap-2 bg-[#FAF6F0]/10 hover:bg-[#FAF6F0]/20 px-3 py-1 rounded-full border border-[#D4AF37]/40 transition duration-300">
+                        <span id="sound-icon-wrapper">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-[#FFB302]"></i>
+                        </span>
+                        <span class="font-sans-alt text-[10px] tracking-wider uppercase text-[#FAF6F0] font-semibold" id="sound-text">
+                            ASMR Sound: ON
+                        </span>
+                    </button>
+
+                    <button onclick="nextPage()" class="flex items-center gap-1 font-cinzel text-xs text-[#FAF6F0] hover:text-[#FFB302] transition duration-300">
+                        Next <i data-lucide="chevron-right" class="w-4 h-4 text-[#D4AF37]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Integrated Fast Search & Food Preference Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="relative md:col-span-2">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#D4AF37]">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" id="menu-search-input" onkeyup="filterMenu()" placeholder="Search imperial delicacies (e.g. paneer, pizza, shake)..." 
+                           class="w-full bg-[#FAF6F0]/5 border border-[#D4AF37]/40 rounded-lg py-2 pl-10 pr-4 text-xs text-[#FAF6F0] placeholder-[#FAF6F0]/40 outline-none focus:border-[#FFB302] font-sans-alt transition duration-200">
+                    <button id="search-clear-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 flex items-center pr-3 text-[#FAF6F0]/50 hover:text-[#FFB302]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button onclick="setMenuPreference('all')" id="pref-btn-all" class="flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-[#D4AF37] text-[#0A1D37] border border-[#D4AF37] transition duration-200">
+                        All
+                    </button>
+                    <button onclick="setMenuPreference('veg')" id="pref-btn-veg" class="flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-transparent text-[#FAF6F0]/80 border border-[#FAF6F0]/20 hover:border-[#D4AF37] transition duration-200 flex items-center justify-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Veg
+                    </button>
+                    <button onclick="setMenuPreference('stars')" id="pref-btn-stars" class="flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-transparent text-[#FAF6F0]/80 border border-[#FAF6F0]/20 hover:border-[#D4AF37] transition duration-200 flex items-center justify-center gap-1">
+                        <span class="text-[#FFB302]">★</span> Royal
+                    </button>
+                </div>
+            </div>
+            
+            <div id="search-status-banner" class="hidden text-center text-xs font-sans-alt text-[#FFB302] py-1 border-t border-[#D4AF37]/20">
+                Found matching elements! Navigate pages to view highlighted results.
+            </div>
+        </div>
+
+        <!-- 3D Book Container -->
+        <div class="w-full max-w-4xl h-[70vh] md:h-[75vh] book-container bg-[#FAF6F0] rounded-2xl shadow-2xl border-4 border-[#0A1D37] relative overflow-hidden">
+            
+            <!-- Page 1: Welcome/Cover -->
+            <div id="page-1" class="page-card active bg-gradient-to-br from-[#0A1D37] via-[#0D2444] to-[#0A1D37] p-8 flex flex-col justify-between items-center text-center">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+                <div class="ornament-corner ornament-bl"></div>
+                <div class="ornament-corner ornament-br"></div>
+
+                <div class="flex flex-col items-center pt-4">
+                    <div class="text-[#D4AF37] mb-2 animate-bounce">
+                        <i data-lucide="crown" class="w-10 h-10"></i>
+                    </div>
+                    <div class="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+                </div>
+
+                <div class="flex flex-col items-center my-auto space-y-6">
+                    <div class="relative group p-1.5 bg-gradient-to-r from-[#D4AF37] to-[#FFB302] rounded-xl shadow-lg transform hover:scale-105 transition duration-500 max-w-[280px]">
+                        <img src="https://i.ibb.co/prwhdnC0/Screenshot-20260518-144001-Chrome.jpg" 
+                             alt="Grill Masters Logo 1" 
+                             class="rounded-lg border-2 border-[#0A1D37] w-full object-cover shadow-inner"
+                             onerror="this.src='https://placehold.co/400?text=GRILL+MASTERS+LOGO';">
+                    </div>
+
+                    <p class="font-cinzel text-[#FFB302] text-sm md:text-base tracking-[0.25em] font-semibold uppercase italic yellow-glow">
+                        TASTE AND HEALTH WRAPPED TOGETHER
+                    </p>
+
+                    <div class="w-16 h-[2px] bg-[#D4AF37] my-3"></div>
+
+                    <div class="p-1 bg-[#FAF6F0] rounded-xl shadow-md max-w-[200px]">
+                        <img src="https://i.ibb.co/84bMbV7S/Screenshot-20260429-174505-Gallery.jpg" 
+                             alt="Grill Masters Logo 2" 
+                             class="rounded-lg object-contain w-full max-h-[110px]"
+                             onerror="this.src='https://placehold.co/400?text=AUTHENTIC+ROYAL+SEAL';">
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center pb-4">
+                    <div class="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mb-3"></div>
+                    <p class="font-sans-alt text-[11px] tracking-[0.3em] uppercase text-[#FAF6F0]/80 flex items-center gap-2">
+                        <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-[#D4AF37]"></i> Swipe Left or Tap Next To Enter
+                    </p>
+                </div>
+            </div>
+
+            <!-- Page 2: Pizza Varieties -->
+            <div id="page-2" class="page-card incoming bg-[#FAF6F0] p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scroll">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+                
+                <div class="w-full bg-[#202124] border-2 border-[#D4AF37] py-3 px-6 rounded-lg shadow-lg text-center mb-6 mt-4">
+                    <h1 class="font-cinzel text-3xl md:text-4xl text-[#FFB302] font-black tracking-widest uppercase yellow-glow">
+                        PIZZA VARIETIES
+                    </h1>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- VEG PIZZA -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2 flex justify-between items-center">
+                            <h2 class="font-cinzel text-lg md:text-xl text-[#FAF6F0] font-bold tracking-wider">VEG PIZZA</h2>
+                            <div class="flex gap-16 font-sans-alt text-xs font-bold text-[#D4AF37] pr-2">
+                                <span class="w-12 text-center">REG (R)</span>
+                                <span class="w-12 text-center">MED (M)</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-3 font-sans-alt">
+                            <!-- Pizza 1 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1.5 hover:bg-[#0B3C20]/5 px-1 rounded transition" data-name="Cheese Margherita Veg Pizza" data-veg="true">
+                                <span class="font-medium text-sm md:text-base">Cheese Margherita</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('cheese_margherita_regular', 'Cheese Margherita (R)', 170)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-cheese_margherita_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('cheese_margherita_regular', 'Cheese Margherita (R)', 170)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-cheese_margherita_regular">170</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('cheese_margherita_medium', 'Cheese Margherita (M)', 310)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-cheese_margherita_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('cheese_margherita_medium', 'Cheese Margherita (M)', 310)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-cheese_margherita_medium">310</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pizza 2 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1.5 hover:bg-[#0B3C20]/5 px-1 rounded transition" data-name="Veggie Garden Pizza" data-veg="true">
+                                <span class="font-medium text-sm md:text-base">Veggie Garden</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('veggie_garden_regular', 'Veggie Garden (R)', 170)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-veggie_garden_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('veggie_garden_regular', 'Veggie Garden (R)', 170)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-veggie_garden_regular">170</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('veggie_garden_medium', 'Veggie Garden (M)', 310)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-veggie_garden_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('veggie_garden_medium', 'Veggie Garden (M)', 310)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-veggie_garden_medium">310</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pizza 3 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1.5 hover:bg-[#0B3C20]/5 px-1 rounded transition" data-name="Sweet Corn Treat Pizza" data-veg="true" data-stars="true">
+                                <span class="font-medium text-sm md:text-base flex items-center gap-1">
+                                    Sweet Corn Treat <span class="text-[#FFB302]">★</span>
+                                </span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('sweet_corn_treat_regular', 'Sweet Corn Treat (R)', 170)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-sweet_corn_treat_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('sweet_corn_treat_regular', 'Sweet Corn Treat (R)', 170)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-sweet_corn_treat_regular">170</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('sweet_corn_treat_medium', 'Sweet Corn Treat (M)', 310)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-sweet_corn_treat_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('sweet_corn_treat_medium', 'Sweet Corn Treat (M)', 310)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-sweet_corn_treat_medium">310</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pizza 4 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1.5 hover:bg-[#0B3C20]/5 px-1 rounded transition" data-name="Farm Fresh Pizza" data-veg="true">
+                                <span class="font-medium text-sm md:text-base">Farm Fresh</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('farm_fresh_regular', 'Farm Fresh (R)', 200)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-farm_fresh_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('farm_fresh_regular', 'Farm Fresh (R)', 200)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-farm_fresh_regular">200</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('farm_fresh_medium', 'Farm Fresh (M)', 330)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-farm_fresh_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('farm_fresh_medium', 'Farm Fresh (M)', 330)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-farm_fresh_medium">330</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pizza 5 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1.5 hover:bg-[#0B3C20]/5 px-1 rounded transition" data-name="Paneer Bingo Pizza" data-veg="true" data-stars="true">
+                                <span class="font-medium text-sm md:text-base flex items-center gap-1">
+                                    Paneer Bingo <span class="text-[#FFB302]">★</span>
+                                </span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('paneer_bingo_regular', 'Paneer Bingo (R)', 200)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-paneer_bingo_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('paneer_bingo_regular', 'Paneer Bingo (R)', 200)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-paneer_bingo_regular">200</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('paneer_bingo_medium', 'Paneer Bingo (M)', 330)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/20">-</button>
+                                        <span id="qty-paneer_bingo_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('paneer_bingo_medium', 'Paneer Bingo (M)', 330)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold hover:bg-[#0B3C20]/90">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-paneer_bingo_medium">330</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- THIN CRUST PIZZA -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-lg text-[#FAF6F0] font-bold tracking-wider">THIN CRUST PIZZA</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-3 font-sans-alt">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1" data-name="Mushroom Pizza Thin Crust" data-veg="true">
+                                <span class="font-medium text-sm">Mushroom Pizza</span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('mushroom_pizza', 'Mushroom Pizza (TC)', 390)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-mushroom_pizza" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('mushroom_pizza', 'Mushroom Pizza (TC)', 390)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="text-sm font-bold text-[#0B3C20] ml-2">₹<span id="price-mushroom_pizza">390</span></span>
+                                </div>
+                            </div>
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1" data-name="Peri Peri Paneer Pizza Thin Crust" data-veg="true">
+                                <span class="font-medium text-sm">Peri Peri Paneer Pizza</span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('peri_peri_paneer_pizza', 'Peri Peri Paneer Pizza (TC)', 390)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-peri_peri_paneer_pizza" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('peri_peri_paneer_pizza', 'Peri Peri Paneer Pizza (TC)', 390)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="text-sm font-bold text-[#0B3C20] ml-2">₹<span id="price-peri_peri_paneer_pizza">390</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NON-VEG PIZZA -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2 flex justify-between items-center">
+                            <h2 class="font-cinzel text-lg text-[#FAF6F0] font-bold tracking-wider">NON-VEG PIZZA</h2>
+                            <div class="flex gap-16 font-sans-alt text-xs font-bold text-[#D4AF37] pr-2">
+                                <span class="w-12 text-center">REG (R)</span>
+                                <span class="w-12 text-center">MED (M)</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-3 font-sans-alt">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/10 pb-1" data-name="Grilled Chicken Pizza" data-veg="false">
+                                <span class="font-medium text-sm">Grilled Chicken Pizza</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('grilled_chicken_pizza_regular', 'Grilled Chicken Pizza (R)', 250)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                        <span id="qty-grilled_chicken_pizza_regular" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('grilled_chicken_pizza_regular', 'Grilled Chicken Pizza (R)', 250)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-grilled_chicken_pizza_regular">250</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('grilled_chicken_pizza_medium', 'Grilled Chicken Pizza (M)', 420)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                        <span id="qty-grilled_chicken_pizza_medium" class="text-xs font-semibold w-3 text-center">0</span>
+                                        <button onclick="incrementOrder('grilled_chicken_pizza_medium', 'Grilled Chicken Pizza (M)', 420)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                        <span class="text-xs font-semibold text-[#0B3C20] ml-1">₹<span id="price-grilled_chicken_pizza_medium">420</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-10"></div>
+            </div>
+
+            <!-- Page 3: Burgers, Noodles & Sides -->
+            <div id="page-3" class="page-card incoming bg-[#FAF6F0] p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scroll">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+
+                <div class="text-center my-4">
+                    <span class="font-cinzel text-[#0B3C20] border-b-2 border-[#D4AF37] text-2xl font-bold tracking-[0.2em] uppercase">Burgers &amp; Noodles</span>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- VEG BURGER -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2.5 flex justify-between items-center">
+                            <h2 class="font-cinzel text-base md:text-lg text-[#FAF6F0] font-bold tracking-wider">VEG BURGER</h2>
+                            <div class="flex gap-14 font-sans-alt text-[10px] md:text-xs font-bold text-[#D4AF37] pr-2">
+                                <span class="w-12 text-center">REG.</span>
+                                <span class="w-12 text-center">W. WHEAT</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt">
+                            <!-- Burger 1 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Texas Veg Burger" data-veg="true" data-stars="true">
+                                <span class="font-medium text-sm flex items-center gap-1">Texas <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('texas_burger_reg', 'Texas Burger (R)', 80)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-texas_burger_reg" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('texas_burger_reg', 'Texas Burger (R)', 80)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-texas_burger_reg">80</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('texas_burger_wheat', 'Texas Burger (WW)', 90)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-texas_burger_wheat" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('texas_burger_wheat', 'Texas Burger (WW)', 90)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-texas_burger_wheat">90</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Burger 2 -->
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Creamy Veg Burger" data-veg="true" data-stars="true">
+                                <span class="font-medium text-sm flex items-center gap-1">Creamy Burger <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('creamy_burger_reg', 'Creamy Burger (R)', 80)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-creamy_burger_reg" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('creamy_burger_reg', 'Creamy Burger (R)', 80)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-creamy_burger_reg">80</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('creamy_burger_wheat', 'Creamy Burger (WW)', 90)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-creamy_burger_wheat" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('creamy_burger_wheat', 'Creamy Burger (WW)', 90)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-creamy_burger_wheat">90</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NOODLES -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">NOODLES</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt text-sm">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Desi Chowmein Noodles" data-veg="true" data-stars="true">
+                                <span class="font-medium flex items-center gap-1">Desi Chowmein <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('desi_chowmein', 'Desi Chowmein', 120)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-desi_chowmein" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('desi_chowmein', 'Desi Chowmein', 120)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-desi_chowmein">120</span></span>
+                                </div>
+                            </div>
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Veg Noodles" data-veg="true">
+                                <span class="font-medium">Veg Noodles</span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('veg_noodles', 'Veg Noodles', 120)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-veg_noodles" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('veg_noodles', 'Veg Noodles', 120)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-veg_noodles">120</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-10"></div>
+            </div>
+
+            <!-- Page 4: Gourmet Starters & Wraps -->
+            <div id="page-4" class="page-card incoming bg-[#FAF6F0] p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scroll">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+
+                <div class="text-center my-4">
+                    <span class="font-cinzel text-[#0B3C20] border-b-2 border-[#D4AF37] text-2xl font-bold tracking-[0.2em] uppercase">Gourmet Starters &amp; Wraps</span>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- VEG WRAPS -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2 flex justify-between items-center">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">VEG WRAPS</h2>
+                            <div class="flex gap-14 font-sans-alt text-[10px] font-bold text-[#D4AF37] pr-2">
+                                <span class="w-12 text-center">REG.</span>
+                                <span class="w-12 text-center">W. WHEAT</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Veg Wrap" data-veg="true">
+                                <span class="font-medium text-sm">Veg Wrap</span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('veg_wrap_reg', 'Veg Wrap (Reg)', 120)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-veg_wrap_reg" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('veg_wrap_reg', 'Veg Wrap (Reg)', 120)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-veg_wrap_reg">120</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('veg_wrap_wheat', 'Veg Wrap (WW)', 130)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-veg_wrap_wheat" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('veg_wrap_wheat', 'Veg Wrap (WW)', 130)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-veg_wrap_wheat">130</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SPRING ROLLS -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">SPRING ROLLS</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt text-sm">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Veg Spring Rolls" data-veg="true" data-stars="true">
+                                <span class="font-medium flex items-center gap-1">Veg Spring Rolls <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('veg_spring_rolls', 'Veg Spring Rolls', 130)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-veg_spring_rolls" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('veg_spring_rolls', 'Veg Spring Rolls', 130)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-veg_spring_rolls">130</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-10"></div>
+            </div>
+
+            <!-- Page 5: Pasta, Sandwiches & Salads -->
+            <div id="page-5" class="page-card incoming bg-[#FAF6F0] p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scroll">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+
+                <div class="text-center my-4">
+                    <span class="font-cinzel text-[#0B3C20] border-b-2 border-[#D4AF37] text-2xl font-bold tracking-[0.2em] uppercase">Pasta &amp; Sandwiches</span>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- VEG GRILLED SANDWICHES -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">VEG GRILLED SANDWICHES</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt text-sm">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Cheesy Corn Sandwich" data-veg="true" data-stars="true">
+                                <span class="font-medium flex items-center gap-1">Cheesy Corn <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('cheesy_corn_sandwich', 'Cheesy Corn Sandwich', 120)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-cheesy_corn_sandwich" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('cheesy_corn_sandwich', 'Cheesy Corn Sandwich', 120)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-cheesy_corn_sandwich">120</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASTA-LA-VISTA -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <div class="flex flex-col">
+                                <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">PASTA-LA-VISTA</h2>
+                                <span class="font-sans-alt text-[10px] text-[#FFB302] bg-[#202124] px-2 py-0.5 rounded mt-0.5 tracking-wider font-semibold">
+                                    Served with Garlic Bread
+                                </span>
+                            </div>
+                            <div class="flex gap-14 font-sans-alt text-[10px] font-bold text-[#D4AF37] self-end pr-2">
+                                <span class="w-12 text-center">REG.</span>
+                                <span class="w-12 text-center">BAKED</span>
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="White Sauce Pasta" data-veg="true" data-stars="true">
+                                <span class="font-medium text-sm flex items-center gap-1">White Sauce Pasta <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="decrementOrder('white_sauce_pasta_reg', 'White Sauce Pasta (R)', 160)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-white_sauce_pasta_reg" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('white_sauce_pasta_reg', 'White Sauce Pasta (R)', 160)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-white_sauce_pasta_reg">160</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 border-l pl-3 border-[#0B3C20]/20">
+                                        <button onclick="decrementOrder('white_sauce_pasta_baked', 'White Sauce Pasta (Baked)', 190)" class="w-4 h-4 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-[10px] font-bold">-</button>
+                                        <span id="qty-white_sauce_pasta_baked" class="text-xs font-semibold w-2 text-center">0</span>
+                                        <button onclick="incrementOrder('white_sauce_pasta_baked', 'White Sauce Pasta (Baked)', 190)" class="w-4 h-4 bg-[#0B3C20] text-white rounded flex items-center justify-center text-[10px] font-bold">+</button>
+                                        <span class="text-xs text-[#0B3C20] ml-1">₹<span id="price-white_sauce_pasta_baked">190</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-10"></div>
+            </div>
+
+            <!-- Page 6: Coffee, Shakes & Desserts -->
+            <div id="page-6" class="page-card incoming bg-[#FAF6F0] p-6 md:p-8 flex flex-col h-full overflow-y-auto custom-scroll">
+                <div class="ornament-corner ornament-tl"></div>
+                <div class="ornament-corner ornament-tr"></div>
+
+                <div class="text-center my-4">
+                    <span class="font-cinzel text-[#0B3C20] border-b-2 border-[#D4AF37] text-2xl font-bold tracking-[0.2em] uppercase">Shakes &amp; Beverages</span>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- HOT COFFEE -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">HOT COFFEE</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt text-sm">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Cappuccino Hot Coffee" data-veg="true" data-stars="true">
+                                <span class="font-medium flex items-center gap-1">Cappuccino <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('cappuccino', 'Cappuccino Coffee', 100)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-cappuccino" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('cappuccino', 'Cappuccino Coffee', 100)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-cappuccino">100</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SHAKES -->
+                    <div class="menu-section bg-[#0B3C20] border-l-4 border-[#D4AF37] rounded-r-xl shadow-md overflow-hidden">
+                        <div class="px-4 py-2">
+                            <h2 class="font-cinzel text-base text-[#FAF6F0] font-bold tracking-wider">SHAKES</h2>
+                        </div>
+                        <div class="bg-[#FAF6F0] p-4 text-[#0A1D37] space-y-2.5 font-sans-alt text-sm">
+                            <div class="menu-item flex justify-between items-center border-b border-[#0B3C20]/5 pb-1" data-name="Oreo Shake" data-veg="true" data-stars="true">
+                                <span class="font-medium flex items-center gap-1">Oreo Shake <span class="text-[#FFB302]">★</span></span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="decrementOrder('oreo_shake', 'Oreo Shake', 140)" class="w-5 h-5 bg-[#0B3C20]/10 text-[#0B3C20] rounded flex items-center justify-center text-xs font-bold">-</button>
+                                    <span id="qty-oreo_shake" class="text-xs font-semibold w-4 text-center">0</span>
+                                    <button onclick="incrementOrder('oreo_shake', 'Oreo Shake', 140)" class="w-5 h-5 bg-[#0B3C20] text-white rounded flex items-center justify-center text-xs font-bold">+</button>
+                                    <span class="font-bold text-[#0B3C20] ml-2">₹<span id="price-oreo_shake">140</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-10"></div>
+            </div>
+
+        </div>
+
+        <!-- Pagination Indicators & Progress Dots -->
+        <div class="mt-4 flex gap-3 items-center z-40">
+            <button onclick="goToPage(1)" class="page-dot w-3.5 h-3.5 rounded-full bg-[#0A1D37] transition duration-300 border border-[#D4AF37] shadow-md" title="Cover Page"></button>
+            <button onclick="goToPage(2)" class="page-dot w-3 h-3 rounded-full bg-slate-300 transition duration-300 border border-[#D4AF37]" title="Pizza Varieties"></button>
+            <button onclick="goToPage(3)" class="page-dot w-3 h-3 rounded-full bg-slate-300 transition duration-300 border border-[#D4AF37]" title="Burgers & Noodles"></button>
+            <button onclick="goToPage(4)" class="page-dot w-3 h-3 rounded-full bg-slate-300 transition duration-300 border border-[#D4AF37]" title="Starters & Wraps"></button>
+            <button onclick="goToPage(5)" class="page-dot w-3 h-3 rounded-full bg-slate-300 transition duration-300 border border-[#D4AF37]" title="Pasta & Sandwiches"></button>
+            <button onclick="goToPage(6)" class="page-dot w-3 h-3 rounded-full bg-slate-300 transition duration-300 border border-[#D4AF37]" title="Beverages"></button>
+        </div>
+
+        <!-- Scrolling Banner Feedback Cue -->
+        <div class="mt-4 animate-pulse flex flex-col items-center">
+            <p class="font-sans-alt text-[10px] tracking-widest text-[#0B3C20] font-semibold uppercase">Scroll Down For Royal Feedback</p>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-[#D4AF37]"></i>
+        </div>
+
+    </main>
+
+    <!-- Floating Royal Basket Bill Indicator Button -->
+    <div id="basket-fab" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300">
+        <button onclick="openBasketModal()" class="flex items-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#FFB302] text-[#0A1D37] px-5 py-3.5 rounded-full shadow-2xl border-2 border-[#FAF6F0] font-sans-alt font-bold text-sm tracking-wide hover:scale-105 active:scale-95 transition">
+            <span class="relative">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                <span id="basket-count" class="absolute -top-2.5 -right-2 bg-red-600 text-white font-sans-alt text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">0</span>
+            </span>
+            <span>Royal Basket: <span id="basket-fab-total">₹0</span></span>
+        </button>
+    </div>
+
+    <!-- Royal Feedback Chamber Section -->
+    <section class="w-full bg-gradient-to-b from-[#0A1D37] to-[#050D1B] text-[#FAF6F0] py-12 px-6 md:px-12 border-t-4 border-[#D4AF37]">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-8">
+                <div class="text-[#D4AF37] flex justify-center mb-2">
+                    <i data-lucide="award" class="w-8 h-8"></i>
+                </div>
+                <h2 class="font-cinzel text-2xl md:text-3xl text-[#FAF6F0] tracking-widest uppercase">The Royal Feedback Chamber</h2>
+                <div class="w-32 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-3"></div>
+                <p class="font-sans-alt text-xs text-[#FAF6F0]/70 mt-2 tracking-wider">Your culinary voice shapes our imperial recipes</p>
+            </div>
+
+            <form onsubmit="window.handleFeedback(event)" class="space-y-6 font-sans-alt">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="relative">
+                        <label class="block text-[11px] uppercase tracking-widest text-[#D4AF37] mb-1">Your Royal Highness (Name)</label>
+                        <div class="flex items-center border-b-2 border-[#D4AF37]/50 focus-within:border-[#FAF6F0] transition py-2">
+                            <i data-lucide="user" class="w-4 h-4 text-[#D4AF37] mr-3"></i>
+                            <input type="text" id="fb-name" required placeholder="Enter your name" 
+                                   class="bg-transparent border-none outline-none w-full text-sm text-[#FAF6F0] placeholder-[#FAF6F0]/40">
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <label class="block text-[11px] uppercase tracking-widest text-[#D4AF37] mb-1">Scroll Coordinates (Email/Phone)</label>
+                        <div class="flex items-center border-b-2 border-[#D4AF37]/50 focus-within:border-[#FAF6F0] transition py-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-[#D4AF37] mr-3"></i>
+                            <input type="text" id="fb-contact" required placeholder="Enter Email or Phone number" 
+                                   class="bg-transparent border-none outline-none w-full text-sm text-[#FAF6F0] placeholder-[#FAF6F0]/40">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] uppercase tracking-widest text-[#D4AF37] mb-2 text-center md:text-left">Your Experience Rating</label>
+                    <div class="flex justify-center md:justify-start gap-4">
+                        <button type="button" onclick="window.setRating(1)" class="star-btn text-[#FAF6F0]/40 hover:text-[#FFB302] transition transform hover:scale-125 duration-100" data-star="1">
+                            <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                        </button>
+                        <button type="button" onclick="window.setRating(2)" class="star-btn text-[#FAF6F0]/40 hover:text-[#FFB302] transition transform hover:scale-125 duration-100" data-star="2">
+                            <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                        </button>
+                        <button type="button" onclick="window.setRating(3)" class="star-btn text-[#FAF6F0]/40 hover:text-[#FFB302] transition transform hover:scale-125 duration-100" data-star="3">
+                            <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                        </button>
+                        <button type="button" onclick="window.setRating(4)" class="star-btn text-[#FAF6F0]/40 hover:text-[#FFB302] transition transform hover:scale-125 duration-100" data-star="4">
+                            <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                        </button>
+                        <button type="button" onclick="window.setRating(5)" class="star-btn text-[#FAF6F0]/40 hover:text-[#FFB302] transition transform hover:scale-125 duration-100" data-star="5">
+                            <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] uppercase tracking-widest text-[#D4AF37] mb-1">Your Royal Message</label>
+                    <textarea id="fb-message" rows="4" required placeholder="Tell us about your culinary journey..." 
+                              class="w-full bg-[#FAF6F0]/5 border border-[#D4AF37]/40 rounded-xl p-3 text-sm text-[#FAF6F0] placeholder-[#FAF6F0]/30 focus:border-[#FAF6F0] outline-none transition"></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="inline-flex items-center gap-3 bg-gradient-to-r from-[#D4AF37] to-[#FFB302] hover:from-[#FFB302] hover:to-[#D4AF37] text-[#0A1D37] font-semibold tracking-widest uppercase text-xs px-8 py-3.5 rounded-full shadow-lg transform hover:-translate-y-0.5 transition duration-300">
+                        Dispatch to Grill Masters <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Modal 1: The Royal Basket & Order Summary (Updated for direct Firebase Ordering) -->
+    <div id="basket-modal" class="fixed inset-0 bg-[#0A1D37]/85 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-[#FAF6F0] border-2 border-[#D4AF37] p-6 rounded-2xl max-w-md w-full text-left shadow-2xl relative flex flex-col max-h-[85vh] transform scale-95 transition-all">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center border-b border-[#0B3C20]/10 pb-3 mb-4">
+                <div class="flex items-center gap-2 text-[#0B3C20]">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-[#D4AF37]"></i>
+                    <h3 class="font-cinzel text-lg font-bold tracking-wider">Your Royal Order</h3>
+                </div>
+                <button onclick="window.closeBasketModal()" class="text-[#0A1D37] hover:text-red-500 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Items Container -->
+            <div id="basket-items-list" class="flex-grow overflow-y-auto space-y-3 pr-1 custom-scroll text-sm font-sans-alt max-h-[280px]">
+                <!-- Javascript will inject order lines dynamically here -->
+            </div>
+
+            <!-- Customer Details Segment -->
+            <div id="customer-details-section" class="border-t border-[#0B3C20]/15 pt-3 mt-4 space-y-3 font-sans-alt">
+                <h4 class="text-[11px] uppercase tracking-wider text-[#0B3C20] font-bold">Delivery / Table Coordinates</h4>
+                <div>
+                    <input type="text" id="order-customer-name" required placeholder="Your Name or Table Number *" 
+                           class="w-full bg-[#0B3C20]/5 border border-[#D4AF37]/40 rounded-lg p-2.5 text-xs text-[#0A1D37] outline-none focus:border-[#0B3C20]">
+                </div>
+                <div>
+                    <input type="tel" id="order-customer-phone" placeholder="Phone Number (Optional)" 
+                           class="w-full bg-[#0B3C20]/5 border border-[#D4AF37]/40 rounded-lg p-2.5 text-xs text-[#0A1D37] outline-none focus:border-[#0B3C20]">
+                </div>
+            </div>
+
+            <!-- Tax Invoice Calculation Segment (GST & Packaging charges completely removed) -->
+            <div class="border-t border-[#0B3C20]/15 pt-3 mt-3 space-y-1.5 text-xs font-sans-alt text-[#0A1D37]/80">
+                <div class="flex justify-between text-base font-bold text-[#0B3C20] border-t border-[#0B3C20]/10 pt-2">
+                    <span>Grand Total:</span>
+                    <span id="invoice-grand-total">₹0.00</span>
+                </div>
+            </div>
+
+            <!-- Direct Firebase Submission Button -->
+            <div class="mt-4">
+                <button id="place-order-submit-btn" onclick="window.submitRoyalOrder()" class="w-full py-3.5 bg-gradient-to-r from-[#0B3C20] to-[#0A1D37] text-white rounded-xl font-sans-alt font-semibold text-xs tracking-widest uppercase transition flex items-center justify-center gap-2 shadow-lg hover:from-[#0A1D37] hover:to-[#0B3C20]">
+                    <i data-lucide="check-circle" class="w-4.5 h-4.5 text-[#D4AF37]"></i> Place Royal Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Action Trigger Status/Prompt -->
+    <div id="status-modal" class="fixed inset-0 bg-[#0A1D37]/80 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition duration-300">
+        <div class="bg-[#FAF6F0] border-2 border-[#D4AF37] p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl relative">
+            <div id="status-modal-icon-container" class="text-[#0B3C20] flex justify-center mb-4 animate-bounce">
+                <i data-lucide="check-circle" class="w-12 h-12 text-[#D4AF37]"></i>
+            </div>
+            <h3 class="font-cinzel text-lg text-[#0A1D37] font-bold tracking-wider mb-2" id="status-modal-title">Message Dispatched!</h3>
+            <p class="font-sans-alt text-xs text-[#0A1D37]/70 mb-6" id="status-modal-desc">Your order is being routed successfully.</p>
+            <button onclick="window.closeModal()" class="w-full py-2 bg-[#0B3C20] text-[#FAF6F0] rounded-xl font-semibold uppercase tracking-wider text-xs hover:bg-[#0B3C20]/90 transition">
+                Return to Feast
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Modular Modules integration for direct Order Receiving -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Credentials
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR72F9nFf8awxsBJG11xO7mHNGIdiXcpE",
+            authDomain: "menu-5e048.firebaseapp.com",
+            projectId: "menu-5e048",
+            storageBucket: "menu-5e048.firebasestorage.app",
+            messagingSenderId: "429776931303",
+            appId: "1:429776931303:web:688dab79bd2753cc0c9542",
+            measurementId: "G-BPL7CM5DVX"
+        };
+
+        // Initialize Firebase services
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Fetch application identifier safely (Rule 1 helper)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'menu-5e048';
+
+        // Session authorization state (Rule 3)
+        let authenticatedUser = null;
+
+        async function initAppAuthentication() {
+            try {
+                // Ensure proper anonymous sign in (Rule 3)
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.error("Firebase Auth initialized with error: ", err);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            authenticatedUser = user;
+            console.log("Grill Masters system linked securely: " + (user ? user.uid : "offline"));
+        });
+
+        // Trigger safe registration
+        initAppAuthentication();
+
+        // ----------------- SUBMIT ROYAL ORDER TO FIRESTORE -----------------
+        async function submitRoyalOrder() {
+            const customerNameField = document.getElementById('order-customer-name');
+            const customerPhoneField = document.getElementById('order-customer-phone');
+            const submitBtn = document.getElementById('place-order-submit-btn');
+
+            const customerName = customerNameField.value.trim();
+            const customerPhone = customerPhoneField.value.trim();
+
+            if (!customerName) {
+                customerNameField.classList.add('border-red-500');
+                customerNameField.focus();
+                return;
+            } else {
+                customerNameField.classList.remove('border-red-500');
+            }
+
+            // Ensure authentication is present (Rule 3 Guardrail)
+            if (!authenticatedUser) {
+                try {
+                    submitBtn.innerText = "Connecting Securely...";
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.error("Authentication recovery failure", e);
+                    showFeedbackModal("Authentication Failure", "Could not verify security parameters. Please verify your internet connection.", false);
+                    return;
+                }
+            }
+
+            // Show Loading State
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="inline-block animate-spin mr-2"><i data-lucide="loader" class="w-4 h-4"></i></span> Transmitting...`;
+            lucide.createIcons();
+
+            let orderItemsParsed = [];
+            let grandTotalSum = 0;
+
+            for (const key in window.royalBasket) {
+                const item = window.royalBasket[key];
+                const lineTotal = item.qty * item.price;
+                grandTotalSum += lineTotal;
+                orderItemsParsed.push({
+                    productId: key,
+                    name: item.name,
+                    quantity: item.qty,
+                    rate: item.price,
+                    total: lineTotal
+                });
+            }
+
+            if (orderItemsParsed.length === 0) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i data-lucide="check-circle" class="w-4.5 h-4.5 text-[#D4AF37]"></i> Place Royal Order`;
+                lucide.createIcons();
+                return;
+            }
+
+            // Package metadata with precise path mapping (Rule 1)
+            const orderPayload = {
+                customerName: customerName,
+                customerPhone: customerPhone,
+                items: orderItemsParsed,
+                subtotal: grandTotalSum,
+                grandTotal: grandTotalSum, // 0 GST and 0 Packaging fees
+                createdAt: serverTimestamp(),
+                status: 'Placed',
+                userId: authenticatedUser ? authenticatedUser.uid : 'anonymous'
+            };
+
+            try {
+                // Save order securely at path: /artifacts/{appId}/public/data/orders (Strict Path - Rule 1)
+                const ordersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+                await addDoc(ordersCollectionRef, orderPayload);
+
+                // Success Sequence
+                window.royalBasket = {};
+                window.recalculateBasket();
+                window.closeBasketModal();
+                
+                // Clear inputs
+                customerNameField.value = '';
+                customerPhoneField.value = '';
+
+                // Reset quantities in original UI catalog
+                const qtyCounters = document.querySelectorAll('[id^="qty-"]');
+                qtyCounters.forEach(counter => {
+                    counter.innerText = '0';
+                });
+
+                showFeedbackModal("Order Sent Successfully!", "Your delicacies have been recorded in the Firestore pipeline. Prep will initiate immediately!", true);
+            } catch (err) {
+                console.error("Firestore database submission failed: ", err);
+                showFeedbackModal("Dispatch Error", "Your order could not reach the database. Please try again later.", false);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i data-lucide="check-circle" class="w-4.5 h-4.5 text-[#D4AF37]"></i> Place Royal Order`;
+                lucide.createIcons();
+            }
+        }
+
+        // Display Custom Feedback Alerts safely inside iframe
+        function showFeedbackModal(title, message, isSuccess) {
+            const statusModal = document.getElementById('status-modal');
+            const titleEl = document.getElementById('status-modal-title');
+            const descEl = document.getElementById('status-modal-desc');
+            const iconContainer = document.getElementById('status-modal-icon-container');
+
+            titleEl.innerText = title;
+            descEl.innerText = message;
+
+            if (isSuccess) {
+                iconContainer.innerHTML = `<i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>`;
+            } else {
+                iconContainer.innerHTML = `<i data-lucide="alert-triangle" class="w-12 h-12 text-red-500 animate-pulse"></i>`;
+            }
+
+            lucide.createIcons();
+            statusModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        // Bind Firestore functions to window so inline onclick expressions can resolve them
+        window.submitRoyalOrder = submitRoyalOrder;
+    </script>
+
+    <!-- General Application UI Script Controls -->
+    <script>
+        // App State Variables
+        const totalPages = 6;
+        let currentPage = 1;
+        let selectedRating = 5;
+        let isAudioOn = true;
+        let currentPreference = 'all';
+
+        // Order Tracker State
+        let royalBasket = {};
+
+        // Local Price definitions (will parse with Live Google Sheet asynchronously)
+        let itemCatalog = {
+            "cheese_margherita_regular": { name: "Margherita Pizza (R)", price: 170 },
+            "cheese_margherita_medium": { name: "Margherita Pizza (M)", price: 310 },
+            "veggie_garden_regular": { name: "Veggie Garden Pizza (R)", price: 170 },
+            "veggie_garden_medium": { name: "Veggie Garden Pizza (M)", price: 310 },
+            "sweet_corn_treat_regular": { name: "Sweet Corn Treat (R)", price: 170 },
+            "sweet_corn_treat_medium": { name: "Sweet Corn Treat (M)", price: 310 },
+            "farm_fresh_regular": { name: "Farm Fresh Pizza (R)", price: 200 },
+            "farm_fresh_medium": { name: "Farm Fresh Pizza (M)", price: 330 },
+            "paneer_bingo_regular": { name: "Paneer Bingo (R)", price: 200 },
+            "paneer_bingo_medium": { name: "Paneer Bingo (M)", price: 330 },
+            "mushroom_pizza": { name: "Mushroom Pizza Thin Crust", price: 390 },
+            "peri_peri_paneer_pizza": { name: "Peri Peri Paneer TC", price: 390 },
+            "grilled_chicken_pizza_regular": { name: "Grilled Chicken Pizza (R)", price: 250 },
+            "grilled_chicken_pizza_medium": { name: "Grilled Chicken Pizza (M)", price: 420 },
+            "texas_burger_reg": { name: "Texas Burger (R)", price: 80 },
+            "texas_burger_wheat": { name: "Texas Burger (WW)", price: 90 },
+            "creamy_burger_reg": { name: "Creamy Burger (R)", price: 80 },
+            "creamy_burger_wheat": { name: "Creamy Burger (WW)", price: 90 },
+            "desi_chowmein": { name: "Desi Chowmein Noodles", price: 120 },
+            "veg_noodles": { name: "Veg Noodles", price: 120 },
+            "veg_wrap_reg": { name: "Veg Wrap (Reg)", price: 120 },
+            "veg_wrap_wheat": { name: "Veg Wrap (WW)", price: 130 },
+            "veg_spring_rolls": { name: "Veg Spring Rolls", price: 130 },
+            "cheesy_corn_sandwich": { name: "Cheesy Corn Sandwich", price: 120 },
+            "white_sauce_pasta_reg": { name: "White Sauce Pasta (R)", price: 160 },
+            "white_sauce_pasta_baked": { name: "White Sauce Pasta (Baked)", price: 190 },
+            "cappuccino": { name: "Cappuccino Coffee", price: 100 },
+            "oreo_shake": { name: "Oreo Shake", price: 140 }
+        };
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // ----------------- REAL-TIME GOOGLE SHEET FETCH SYSTEM -----------------
+        async function fetchMenuPrices() {
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/1ooAhddRANFXqv7S-JLif2CYLwusAYAwfp9CpxsfHlj4/gviz/tq?tqx=out:csv";
+
+            try {
+                const response = await fetch(sheetUrl);
+                const data = await response.text();
+                
+                // Parse rows robustly split by carriage return and new lines
+                const lines = data.split(/\r?\n/);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (!line) continue;
+                    
+                    // Split by comma only outside quotation marks
+                    const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+                    if (parts.length >= 2) {
+                        const itemId = parts[0].replace(/"/g, "").trim();  // Column A: Item ID
+                        const priceValue = parts[1].replace(/"/g, "").trim(); // Column B: Price
+
+                        // Clean non-numeric characters except decimals
+                        const cleanPrice = parseFloat(priceValue.replace(/[^\d.]/g, ''));
+
+                        if (itemId && !isNaN(cleanPrice)) {
+                            // Update dynamic pricing labels inside elements
+                            const element = document.getElementById(`price-${itemId}`);
+                            if (element) {
+                                element.innerText = cleanPrice;
+                            }
+                            // Sync with Catalog storage object so orders match
+                            if (itemCatalog[itemId]) {
+                                itemCatalog[itemId].price = cleanPrice;
+                            }
+                        }
+                    }
+                }
+                console.log("Grill Masters Live Catalog parsed flawlessly from Google Sheets!");
+                recalculateBasket();
+            } catch (error) {
+                console.warn("Pricing Sheet fetch bypassed; running on cached royal prices.", error);
+            }
+        }
+
+        // ----------------- ASMR SOUND SYNTHESIZER -----------------
+        function playASMRFlipSound() {
+            if (!isAudioOn) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                // Generate crisp White Noise buffer
+                const bufferSize = ctx.sampleRate * 0.35;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noiseNode = ctx.createBufferSource();
+                noiseNode.buffer = buffer;
+
+                // Highpass Filter to remove low rumble
+                const hpFilter = ctx.createBiquadFilter();
+                hpFilter.type = 'highpass';
+                hpFilter.frequency.setValueAtTime(2000, ctx.currentTime);
+                hpFilter.frequency.exponentialRampToValueAtTime(4500, ctx.currentTime + 0.2);
+
+                // Bandpass Filter
+                const bpFilter = ctx.createBiquadFilter();
+                bpFilter.type = 'bandpass';
+                bpFilter.frequency.setValueAtTime(3000, ctx.currentTime);
+                bpFilter.Q.setValueAtTime(1.5, ctx.currentTime);
+
+                // Gain Envelope for natural swish behavior
+                const gainNode = ctx.createGain();
+                gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.33);
+
+                noiseNode.connect(hpFilter);
+                hpFilter.connect(bpFilter);
+                bpFilter.connect(gainNode);
+                gainNode.connect(ctx.destination);
+
+                noiseNode.start();
+            } catch (error) {
+                console.log("Audio synthesis blocked by user-interaction browser guard.");
+            }
+        }
+
+        // Toggle Audio controls
+        function toggleAudio() {
+            isAudioOn = !isAudioOn;
+            const textEl = document.getElementById('sound-text');
+            const wrapperEl = document.getElementById('sound-icon-wrapper');
+            
+            if (isAudioOn) {
+                textEl.innerText = "ASMR Sound: ON";
+                wrapperEl.innerHTML = '<i data-lucide="volume-2" class="w-3.5 h-3.5 text-[#FFB302]"></i>';
+                playASMRFlipSound();
+            } else {
+                textEl.innerText = "ASMR Sound: OFF";
+                wrapperEl.innerHTML = '<i data-lucide="volume-x" class="w-3.5 h-3.5 text-[#0B3C20]"></i>';
+            }
+            lucide.createIcons();
+        }
+
+        // ----------------- ROYAL CART & ESTIMATOR -----------------
+        function incrementOrder(id, name, defaultPrice) {
+            const itemPrice = itemCatalog[id] ? itemCatalog[id].price : defaultPrice;
+            if (!royalBasket[id]) {
+                royalBasket[id] = { name: name, price: itemPrice, qty: 0 };
+            }
+            royalBasket[id].qty++;
+            
+            // Sync with dynamic UI elements
+            updateItemQtyUI(id);
+            recalculateBasket();
+        }
+
+        function decrementOrder(id, name, defaultPrice) {
+            if (royalBasket[id] && royalBasket[id].qty > 0) {
+                royalBasket[id].qty--;
+                if (royalBasket[id].qty === 0) {
+                    delete royalBasket[id];
+                }
+            }
+            
+            updateItemQtyUI(id);
+            recalculateBasket();
+        }
+
+        function updateItemQtyUI(id) {
+            const qtyElement = document.getElementById(`qty-${id}`);
+            if (qtyElement) {
+                qtyElement.innerText = royalBasket[id] ? royalBasket[id].qty : 0;
+            }
+        }
+
+        function recalculateBasket() {
+            let totalCount = 0;
+            let subtotal = 0;
+
+            for (const key in royalBasket) {
+                totalCount += royalBasket[key].qty;
+                subtotal += (royalBasket[key].qty * royalBasket[key].price);
+            }
+
+            // GST and packaging charges removed completely per instructions
+            const grandTotal = subtotal;
+
+            // Update Dynamic Floating Action Button
+            const fab = document.getElementById('basket-fab');
+            const basketCount = document.getElementById('basket-count');
+            const basketTotal = document.getElementById('basket-fab-total');
+
+            if (totalCount > 0) {
+                fab.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                basketCount.innerText = totalCount;
+                basketTotal.innerText = `₹${subtotal}`;
+            } else {
+                fab.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }
+
+            // Update Detailed Invoice Elements inside Modal
+            document.getElementById('invoice-grand-total').innerText = `₹${grandTotal.toFixed(2)}`;
+        }
+
+        function openBasketModal() {
+            const listContainer = document.getElementById('basket-items-list');
+            listContainer.innerHTML = '';
+
+            let itemFound = false;
+
+            for (const key in royalBasket) {
+                const item = royalBasket[key];
+                itemFound = true;
+                const rowTotal = item.qty * item.price;
+
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center bg-[#0B3C20]/5 p-2 rounded-lg border-b border-[#0B3C20]/5';
+                row.innerHTML = `
+                    <div>
+                        <span class="font-bold text-[#0A1D37]">${item.name}</span>
+                        <div class="text-[10px] text-[#0A1D37]/70">Unit Price: ₹${item.price}</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5 bg-[#FAF6F0] p-1.5 rounded border border-[#D4AF37]/40 shadow-sm">
+                            <button onclick="decrementOrder('${key}', '${item.name}', ${item.price}); openBasketModal();" class="w-4.5 h-4.5 text-xs font-bold text-red-600">-</button>
+                            <span class="font-bold w-4 text-center text-xs text-[#0B3C20]">${item.qty}</span>
+                            <button onclick="incrementOrder('${key}', '${item.name}', ${item.price}); openBasketModal();" class="w-4.5 h-4.5 text-xs font-bold text-green-600">+</button>
+                        </div>
+                        <span class="font-bold text-xs w-16 text-right text-[#0B3C20]">₹${rowTotal}</span>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            }
+
+            if (!itemFound) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-8 text-[#0A1D37]/60">
+                        <i data-lucide="utensils-crossed" class="w-10 h-10 mx-auto text-[#D4AF37]/50 mb-2"></i>
+                        <span>Your royal selection is empty. Start adding dishes to estimate your bill!</span>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
+            const modal = document.getElementById('basket-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.transform').classList.remove('scale-95');
+        }
+
+        function closeBasketModal() {
+            const modal = document.getElementById('basket-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.transform').classList.add('scale-95');
+        }
+
+        // ----------------- FAST DELICACY SEARCH ENGINE -----------------
+        function filterMenu() {
+            const input = document.getElementById('menu-search-input');
+            const clearBtn = document.getElementById('search-clear-btn');
+            const banner = document.getElementById('search-status-banner');
+            const filterValue = input.value.toLowerCase().trim();
+
+            if (filterValue.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+                banner.classList.add('hidden');
+                resetAllHighlights();
+                return;
+            }
+
+            let foundCount = 0;
+
+            // Check elements on pages
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const name = item.getAttribute('data-name') || '';
+                if (name.toLowerCase().includes(filterValue)) {
+                    item.classList.add('bg-yellow-100', 'border-l-4', 'border-[#FFB302]');
+                    foundCount++;
+                } else {
+                    item.classList.remove('bg-yellow-100', 'border-l-4', 'border-[#FFB302]');
+                }
+            });
+
+            if (foundCount > 0) {
+                banner.innerText = `Matched ${foundCount} dish(es)! Navigate pages with arrow buttons to see gold highlighted cards.`;
+                banner.classList.remove('hidden');
+            } else {
+                banner.innerText = `No items match "${filterValue}". Try searching for Paneer, Pasta, Pizza, or Shake!`;
+                banner.classList.remove('hidden');
+            }
+        }
+
+        // Clear search parameters
+        function clearSearch() {
+            document.getElementById('menu-search-input').value = '';
+            document.getElementById('search-clear-btn').classList.add('hidden');
+            document.getElementById('search-status-banner').classList.add('hidden');
+            resetAllHighlights();
+        }
+
+        function resetAllHighlights() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('bg-yellow-100', 'border-l-4', 'border-[#FFB302]');
+            });
+        }
+
+        // Set Preference Mode (All / Veg / Starred)
+        function setMenuPreference(mode) {
+            currentPreference = mode;
+
+            const btnAll = document.getElementById('pref-btn-all');
+            const btnVeg = document.getElementById('pref-btn-veg');
+            const btnStars = document.getElementById('pref-btn-stars');
+
+            // Reset buttons style
+            [btnAll, btnVeg, btnStars].forEach(btn => {
+                btn.className = "flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-transparent text-[#FAF6F0]/80 border border-[#FAF6F0]/20 hover:border-[#D4AF37] transition duration-200";
+            });
+
+            if (mode === 'all') {
+                btnAll.className = "flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-[#D4AF37] text-[#0A1D37] border border-[#D4AF37] transition duration-200";
+            } else if (mode === 'veg') {
+                btnVeg.className = "flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-green-700 text-white border border-green-700 transition duration-200";
+            } else if (mode === 'stars') {
+                btnStars.className = "flex-1 text-[10px] uppercase font-bold tracking-wider font-sans-alt py-2 rounded-lg bg-[#FFB302] text-[#0A1D37] border border-[#FFB302] transition duration-200";
+            }
+
+            // Apply Preference display classes
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const isVeg = item.getAttribute('data-veg') === 'true';
+                const isStarred = item.getAttribute('data-stars') === 'true';
+
+                if (mode === 'veg' && !isVeg) {
+                    item.classList.add('opacity-40', 'pointer-events-none');
+                } else if (mode === 'stars' && !isStarred) {
+                    item.classList.add('opacity-40', 'pointer-events-none');
+                } else {
+                    item.classList.remove('opacity-40', 'pointer-events-none');
+                }
+            });
+        }
+
+        // ----------------- PAGE NAVIGATION AND INTERACTIVE SWIPING -----------------
+        function updatePageDisplay() {
+            for (let i = 1; i <= totalPages; i++) {
+                const pageElement = document.getElementById(`page-${i}`);
+                if (!pageElement) continue;
+
+                pageElement.classList.remove('active', 'flipped', 'incoming');
+
+                if (i < currentPage) {
+                    pageElement.classList.add('flipped');
+                } else if (i === currentPage) {
+                    pageElement.classList.add('active');
+                } else {
+                    pageElement.classList.add('incoming');
+                }
+            }
+
+            // Update Pagination Dots state
+            const dots = document.querySelectorAll('.page-dot');
+            dots.forEach((dot, index) => {
+                if (index + 1 === currentPage) {
+                    dot.classList.remove('bg-slate-300');
+                    dot.classList.add('bg-[#D4AF37]', 'scale-125');
+                } else {
+                    dot.classList.remove('bg-[#D4AF37]', 'scale-125');
+                    dot.classList.add('bg-slate-300');
+                }
+            });
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                playASMRFlipSound();
+                updatePageDisplay();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                playASMRFlipSound();
+                updatePageDisplay();
+            }
+        }
+
+        function goToPage(pageNo) {
+            if (pageNo >= 1 && pageNo <= totalPages && pageNo !== currentPage) {
+                currentPage = pageNo;
+                playASMRFlipSound();
+                updatePageDisplay();
+            }
+        }
+
+        // Swipe Gestures for smooth mobile devices
+        let touchstartX = 0;
+        let touchendX = 0;
+        let touchstartY = 0;
+        let touchendY = 0;
+
+        const swipeContainer = document.querySelector('.book-container');
+
+        swipeContainer.addEventListener('touchstart', (e) => {
+            touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        swipeContainer.addEventListener('touchend', (e) => {
+            touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        function handleSwipeGesture() {
+            const diffX = touchendX - touchstartX;
+            const diffY = touchendY - touchstartY;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > 45) { // Threshold
+                    if (diffX < 0) {
+                        nextPage();
+                    } else {
+                        prevPage();
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight") {
+                nextPage();
+            } else if (e.key === "ArrowLeft") {
+                prevPage();
+            }
+        });
+
+        // ----------------- ROYAL RATING & CUSTOMER FEEDBACK -----------------
+        function setRating(rating) {
+            selectedRating = rating;
+            const starButtons = document.querySelectorAll('.star-btn');
+            starButtons.forEach((btn, index) => {
+                if (index < rating) {
+                    btn.classList.add('text-[#FFB302]');
+                    btn.classList.remove('text-[#FAF6F0]/40');
+                } else {
+                    btn.classList.add('text-[#FAF6F0]/40');
+                    btn.classList.remove('text-[#FFB302]');
+                }
+            });
+        }
+
+        setRating(5);
+
+        function handleFeedback(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('fb-name').value;
+            const contact = document.getElementById('fb-contact').value;
+            const message = document.getElementById('fb-message').value;
+            const ratingStars = "★".repeat(selectedRating) + "☆".repeat(5 - selectedRating);
+
+            const emailSubject = `Imperial Feedback for Grill Masters from ${name}`;
+            const emailBody = `My Lord / Admin,\n\nI have presented my culinary testimony for Grill Masters:\n\n` + 
+                              `Guest Name: ${name}\n` +
+                              `Contact Info: ${contact}\n` +
+                              `Imperial Rating: ${ratingStars} (${selectedRating}/5 Stars)\n\n` +
+                              `Witness Testimony (Message):\n"${message}"\n\n` +
+                              `With Royal Regards,\n${name}`;
+
+            const mailtoUrl = `mailto:karrranverma@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            
+            const modal = document.getElementById('status-modal');
+            document.getElementById('status-modal-title').innerText = "Message Dispatched!";
+            document.getElementById('status-modal-desc').innerText = `Your feedback was compiled. Opening mail client to route to karrranverma@gmail.com`;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                window.location.href = mailtoUrl;
+            }, 800);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('status-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            
+            // Clean values
+            document.getElementById('fb-name').value = '';
+            document.getElementById('fb-contact').value = '';
+            document.getElementById('fb-message').value = '';
+            setRating(5);
+        }
+
+        // Bind global functions to window explicitly
+        window.prevPage = prevPage;
+        window.nextPage = nextPage;
+        window.goToPage = goToPage;
+        window.toggleAudio = toggleAudio;
+        window.incrementOrder = incrementOrder;
+        window.decrementOrder = decrementOrder;
+        window.openBasketModal = openBasketModal;
+        window.closeBasketModal = closeBasketModal;
+        window.setMenuPreference = setMenuPreference;
+        window.filterMenu = filterMenu;
+        window.clearSearch = clearSearch;
+        window.setRating = setRating;
+        window.handleFeedback = handleFeedback;
+        window.closeModal = closeModal;
+        window.royalBasket = royalBasket;
+        window.recalculateBasket = recalculateBasket;
+
+        // Initialize Everything smoothly on Load
+        window.onload = () => {
+            updatePageDisplay();
+            fetchMenuPrices();
+        };
+    </script>
+</body>
+</html>
+
+```
+
